@@ -4,8 +4,10 @@ import turtle as tur
 import random as rand
 #-----game configuration----
 #sets color
-tur_color = 'blue'
-tur_size = 2
+wn= tur.Screen()
+wn.bgcolor('yellow')
+tur_color = ['blue','lavender','orange','beige','green','red','light blue', 'salmon']
+tur_size = 5
 #sets size
 """
 tr = t.Turtle()
@@ -17,8 +19,8 @@ tr.shape('eek.gif')
 wn.mainloop()
 """
 #sets shape
-tur_shape = 'square'
-font_setup = ("Arial", 20, "normal")
+tur_shape = 'turtle'
+font_setup = ("Times New Roman", 20, "normal")
 #font and size
 score = 0
 
@@ -46,6 +48,10 @@ score_writer.pendown()
 score_writer.hideturtle()
 
 #-----game functions--------
+def change_color():
+    colorthing = rand.choice(tur_color)
+    nerd.fillcolor(colorthing)
+    nerd.stamp
 def update_score():
     global score # gives this function access to the score that was created above
     score += 1
@@ -56,6 +62,7 @@ def nerd_clicked(x,y):
     if (not timer_up):
         update_score()
         change_position()
+        change_color()
     else:
         nerd.hideturtle
         update_score()
@@ -83,3 +90,4 @@ wn = tur.Screen()
 nerd.onclick(nerd_clicked)
 wn.ontimer(countdown, counter_interval)
 wn.mainloop()
+
