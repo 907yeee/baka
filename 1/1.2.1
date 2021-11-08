@@ -1,93 +1,104 @@
 # a121_catch_a_turtle.py
 #-----import statements-----
-import turtle as tur
+import turtle as trtl
+import leaderboard as lb
 import random as rand
 #-----game configuration----
-#sets color
-wn= tur.Screen()
-wn.bgcolor('yellow')
-tur_color = ['blue','lavender','orange','beige','green','red','light blue', 'salmon']
-tur_size = 5
-#sets size
-"""
-tr = t.Turtle()
-wn = t.Screen()
-wn.setup(width=600,height=600)
-wn.bgpic("download.gif")
-wn.addshape('eek.gif')
-tr.shape('eek.gif')
-wn.mainloop()
-"""
-#sets shape
-tur_shape = 'turtle'
-font_setup = ("Times New Roman", 20, "normal")
-#font and size
+box_color = ("lightblue")
+box_size = 3
+box_shape = ("square")
 score = 0
-
-#aifjaiodj
-counter_interval = 1000
-timer_up = False
-timer = 30
-counter = tur.Turtle()
-counter.hideturtle()
-counter.penup()
-counter.goto(200,150)
-counter.pendown()
-
-
 #-----initialize turtle-----
+score_writer = trtl.Turtle()
+counter =  trtl.Turtle()
+font_setup = ("TImes New Roman", 20, "normal")
+timer = 5
+counter_interval = 1000   #1000 represents 1 second
+timer_up = False
+box = trtl.Turtle()
+box.shape(box_shape)
+box.shapesize(box_size)
+box.fillcolor(box_color)
+box.speed(0)
+colors = ["red", "lime", "blue", "yellow", "magenta", "silver", "maroon", "green", "purple", "navy"]
+sizes = [1.5, 1.75, 2, 2.25, 2.5, 2.75, 3]
 
-nerd = tur.Turtle()
-nerd.shape(tur_shape)
-nerd.shapesize=tur_size
-score_writer = tur.Turtle()
-score_writer.hideturtle()
-score_writer.penup()
-score_writer.goto(200,120) # x,y set to fit on smaller screen
-score_writer.pendown()
-score_writer.hideturtle()
+# leaderboard variables
+leaderboard_file_name = "leaderboard.txt"
+leader_names_list = []
+leader_scores_list = []
+player_name = input ("Please enter your name:")
 
 #-----game functions--------
-def change_color():
-    colorthing = rand.choice(tur_color)
-    nerd.fillcolor(colorthing)
-    nerd.stamp
-def update_score():
-    global score # gives this function access to the score that was created above
-    score += 1
-    score_writer.clear()
-    score_writer.write(score, font=font_setup)
-def nerd_clicked(x,y):
+
+# manages the leaderboard for top 5 scorers
+def manage_leaderboard():
+  
+  global leader_scores_list
+  global leader_names_list
+  global nerd
+
+  # load all the leaderboard records into the lists
+  lb.load_leaderboard(leaderboard_file_name, leader_names_list, leader_scores_list)
+
+  # TODO
+  if (len(leader_scores_list) < 5 or score > leader_scores_list[4]):
+    lb.update_leaderboard(leaderboard_file_name, leader_names_list, leader_scores_list, player_name, score)
+    lb.draw_leaderboard(leader_names_list, leader_scores_list, True, nerd, score)
+
+  else:
+    lb.draw_leaderboard(leader_names_list, leader_scores_list, False, nerd, score)
+
+
+def box_clicked(x,y):
     global timer_up
-    if (not timer_up):
+    if (timer > 0):
         update_score()
         change_position()
-        change_color()
     else:
-        nerd.hideturtle
-        update_score()
+        box.hideturtle()
+    add_color()
+    size_change()
 def change_position():
-    nerd.penup()
-    nerd.hideturtle()
-    new_ypos = rand.randint(-150,150)
-    new_xpos = rand.randint(-200,200)
-    nerd.goto(new_xpos,new_ypos)
-    nerd.pendown()
-    nerd.showturtle()
+    new_xpos = rand.randint(-400,400)
+    new_ypos = rand.randint(-300,300)
+    box.penup()
+    box.hideturtle()
+    box.goto(new_xpos,new_ypos)
+    box.showturtle()
+    box.pendown()
+def update_score():
+    global score
+    score += 1
+    score_writer.clear()
+    score_writer.write("Score: " + str(score),font = font_setup)
 def countdown():
-    global timer, timer_up
-    counter.clear()
-    if timer <= 0:
-        counter.write("Time's Up", font=font_setup)
-        timer_up = True
-    else:
-        counter.write("Timer: " + str(timer), font=font_setup)
-        timer -= 1
-        counter.getscreen().ontimer(countdown, counter_interval)
- 
+  global timer, timer_up
+  counter.clear()
+  if timer <= 0:
+    counter.write("Time's Up", font=font_setup)
+    timer_up = True
+    manage_leaderboard()
+  else:
+    counter.write("Timer: " + str(timer), font=font_setup)
+    timer -= 1
+    counter.getscreen().ontimer(countdown, counter_interval)
+def add_color():
+    box.color(rand.choice(colors))
+    box.fillcolor(box_color)
+def size_change():
+    box.shapesize(rand.choice(sizes))
 #-----events----------------
-wn = tur.Screen()
-nerd.onclick(nerd_clicked)
+score_writer.penup()
+score_writer.hideturtle()
+score_writer.goto(-350,260)
+score_writer.pendown()
+counter.penup()
+counter.hideturtle()
+counter.goto(240,260)
+counter.pendown()
+box.onclick(box_clicked)
+wn = trtl.Screen()
+wn.bgcolor("cyan")
 wn.ontimer(countdown, counter_interval)
 wn.mainloop()
-
